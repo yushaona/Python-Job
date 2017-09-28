@@ -1,0 +1,42 @@
+
+    <html>
+        <meta http-equiv=content-type content="text/html; charset=UTF-8">
+        <head><title>OSS表单上传(PostObject)</title></head>
+        <body>
+            <form id="formaa"  onsubmit="uploadfile(this)" action="http://dtcollage.oss-cn-qingdao.aliyuncs.com" method="post" enctype="multipart/form-data">
+                <input type="text" name="OSSAccessKeyId" value="LTAIXUxozaqB17nz">
+                <input type="text" name="policy" value="eyJleHBpcmF0aW9uIjoiMjExNS0wMS0yN1QxMDo1NjoxOVoiLCJjb25kaXRpb25zIjpbWyJjb250ZW50LWxlbmd0aC1yYW5nZSIsIDAsIDUzNjg3MDkxMjBdXX0=">
+                <input type="text" name="Signature" value="mDAKEHhKb/PqCJ8Yj7k8ioxQWt4=">
+                <input type="text" name="key" value="upload/${filename}">
+                <!-- <input type="text" name="success_action_redirect" value="http://oss.aliyun.com"> -->
+                <input type="text" name="success_action_status" value="201">
+                <input name="file" type="file" id="file"  value ="33333.sssss">
+                <input name="submit" value="Upload" type="submit" >
+            </form>
+            <script type="text/javascript" src="lib/plupload-2.1.2/js/plupload.full.min.js"></script>
+            <script type='text/javascript' src="jquery-1.9.1.min.js"></script>
+            <script type='text/javascript'>
+            function uploadfile(){
+                var value=$("#file")[0].files[0];
+                var time=new Date().getTime();
+                $("#file")[0].files[0].name=$("#file")[0].files[0].name+time;
+                //$("#formaa").submit();
+                return;
+                document.getElementById("formaa").submit();
+                console.log("value=",value);
+            }
+				function getfile(obj){
+					var file=$(obj)[0].files[0];
+                    var time=new Date().getTime();
+                    var name=file.name+time;
+                    $(obj)[0].files[0].name=name;
+					console.log("file=",file,"name=",name);
+                    // setTimeout(function() {
+                    //     $(obj).val("");
+                    // }, 100);
+                    
+				}
+			</script>
+        </body>
+    </html>
+    
