@@ -1,15 +1,17 @@
 # 用于金服侠Excel中数据导入
-
+# excel 参考文档 http://www.jianshu.com/p/e21894fc5501
 import xlwings as xw
 from dbFunc.func import importEnteCode
 import configparser as cp
 import  pymysql as py
-import  sys
+import  sys,time,os,datetime
+from pymysql.cursors import SSCursor,SSDictCursor,Cursor,DictCursor
 
 class Excel(object):
     def __init__(self):
         print(1)
         self.app = None
+        self.wb = None
 
     def loadData(self,**kargs):
         filename = kargs.get('filename', None)
@@ -17,8 +19,8 @@ class Excel(object):
             print("文件名未指定")
             return  -1
         try:
-            wb = self.app.books.open(filename)
-            rng = wb.sheets['sheet3'].range('A1').expand('table')
+            self.wb = self.app.books.open(filename)
+            rng = self.wb.sheets['sheet3'].range('A1').expand('table')
             num = rng.shape[1]
             print(num)
             #必须是两列
@@ -32,6 +34,16 @@ class Excel(object):
             import sys
             data = sys.exc_info()
             print("loadData={}".format(data))
+
+    def newExcel(self):
+        self.wb = self.app.books.add()
+        return  self.wb
+
+    # def saveData(self,**kwargs):
+    #     filename = kwargs.get("filename",None)
+    #     if filename is None:
+    #         filename = os.path.join(os.getcwd(),time.strftime("%Y%m%d",time.localtime(time.time()))+'.xls')
+    #     self.app.save()
     def __enter__(self):
         print(2)
         if self.app is None:
@@ -39,10 +51,11 @@ class Excel(object):
         return  self
     def __exit__(self, exc_type, exc_val, exc_tb):
         print(3)
+        if self.wb is not None:
+            self.wb.close()
         self.app.quit()
 
 if __name__ == '__main__':
-
     conf = cp.ConfigParser()
     conf.read("upgradeDB.ini", encoding="utf8")
     db_host, db_port, db_user, db_pass, db_default = "127.0.0.1", 2789, "root", "y1y2g3j4fussen", "db_flybear"
@@ -85,16 +98,60 @@ if __name__ == '__main__':
         print("连接数据库错误:{}".format(data))
         exit(0)
 
-    with conn.cursor() as cursor:
-
-        with Excel() as openExcel:
-            allData = openExcel.loadData(filename='D:\\1.xls')
-            if len(allData):
-                for data in allData:
-                    if isinstance(data,list):
-                        dentalid = data[0]
-                        entecode = data[1]
-                        if dentalid is not None and entecode is not None:
-                            if entecode.upper() == "NONE":
-                                entecode = ''
-                            importEnteCode(conn,cursor,dentalid,entecode)
+    print('''
+    0 退出程序
+    1 导入Excel
+    2 导出Excel
+    ''')
+    while True:
+        try:
+            res = int(input("请输入选项【0或1或2】"))
+            if res == 0:
+                print('Exit')
+                break
+            elif res == 1:
+                # 导入管家号和金服侠的企业号的关系
+                with conn.cursor() as cursor:
+                    with Excel() as openExcel:
+                        allData = openExcel.loadData(filename='D:\\1.xls')
+                        if len(allData):
+                            for data in allData:
+                                if isinstance(data, list):
+                                    dentalid = data[0]
+                                    entecode = data[1]
+                                    if dentalid is not None and entecode is not None:
+                                        if entecode.upper() == "NONE":
+                                            entecode = ''
+                                        importEnteCode(conn, cursor, dentalid, entecode)
+            elif res == 2:
+                clinicid =  str(input("输入诊所ID:"))
+                my_dater = lambda year, month, day,**kwargs: "%04i-%02i-%02i" % (year, month,day)
+                with conn.cursor(SSCursor) as cursor:
+                    with Excel() as newExcel:
+                        wb = newExcel.newExcel()
+                        sht = wb.sheets.active
+                        try:
+                            cursor.execute(" select j.* from db_koala.t_jfx_apply j where j.datastatus=1 and j.clinicuniqueid=%s order by j.CreateDate asc ", (clinicid))
+                            col_names = [col[0] for col in cursor.description]
+                            print(col_names)
+                            sht.range('A1').options(empty='NA',numbers=str).value = col_names
+                            sht.range('A1').expand('right').autofit()
+                            i = 2
+                            while True:
+                                data = cursor.fetchone()
+                                if data is None or not data:
+                                    break
+                                cellIndex = 'A'+str(i)
+                                sht.range(cellIndex).options(dates = datetime.date,empty='NA',numbers=str).value = data
+                                sht.range(cellIndex).expand('right').autofit()
+                                i += 1
+                        except:
+                            import sys
+                            data = sys.exc_info()
+                            print("导出Excel:{}".format(data))
+                        finally:
+                            fileName = os.path.join(os.getcwd(), time.strftime("%Y%m%d", time.localtime(time.time())) + '金服侠申请记录.xls')
+                            print(fileName)
+                            wb.save(fileName)
+        except:
+            pass
