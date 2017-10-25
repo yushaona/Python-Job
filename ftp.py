@@ -52,7 +52,7 @@ class FtpObject(object):
 
 
 
-#Excel操作类
+#Excel操作类  本地必须安装Excel的环境，才能正常导入数据
 class Excel(object):
     def __init__(self):
         self.app = None
@@ -99,7 +99,7 @@ def extractFileName(fullPath):
 
 if __name__ == "__main__":
     curPath = os.getcwd()
-    filePath = os.path.join(curPath, 'jfx')
+    filePath = os.path.join(curPath, 'whitelist')
     if os.path.exists(filePath) == False:
         os.mkdir(filePath)
     logPath = os.path.join(curPath, 'logs')
@@ -182,7 +182,7 @@ if __name__ == "__main__":
         logging.error("连接数据库错误:{}".format(data))
         exit(0)
     #ftp文件名
-    fileName = "jfx_whitelist_" + time.strftime("%Y%m%d", time.localtime(time.time())) + ".xls"
+    fileName = "fussen_whitelist_" + time.strftime("%Y%m%d", time.localtime(time.time())) + ".xls"
     #本地文件路径
     filePath = os.path.join(filePath, fileName)
     logging.info('开始生成Excel文件-->>'+filePath)
