@@ -186,49 +186,55 @@ if __name__ == "__main__":
     #本地文件路径
     filePath = os.path.join(filePath, fileName)
     logging.info('开始生成Excel文件-->>'+filePath)
-    with conn.cursor(SSCursor) as cursor:
-        with Excel() as newExcel:
-            wb = newExcel.newExcel()
-            sht = wb.sheets.active
-            try:
-                cursor.execute(
-                    " select j.clinicname as '诊所名'," 
-                    "j.doctorid as '申请医生ID'," 
-                    "j.doctorname as '申请医生姓名'," 
-                    "j.productname as '申请产品',"
-                    "j.proposename  as '申请人',"
-                    "j.proposemobile as '申请人电话',"
-                    "j.total as '账单总额',"
-                    "j.amount as '申请金额',"
-                    "j.firstpay as '首付金额',"
-                    "j.firstpayscale as '首付比例',"
-                    "j.term as '期数',"
-                    "j.notifytype as '通知类型',"
-                    "j.applystatus as '通知状态',"
-                    "j.remark as '备注信息',"
-                    "j.orderno as '申请单编号',"
-                    "j.orderid as '金服侠唯一编号',"
-                    "j.cardid as '申请人身份证号' "
-                    "from db_koala.t_jfx_apply j where j.datastatus=1 order by j.clinicuniqueid,j.createdate ")
-                col_names = [col[0] for col in cursor.description]
-                sht.range('A1').options(empty='NA', numbers=str).value = col_names
-                sht.range('A1').expand('right').autofit()
-                i = 2
-                while True:
-                    data = cursor.fetchone()
-                    if data is None or not data:
-                        break
-                    cellIndex = 'A' + str(i)
-                    sht.range(cellIndex).options(dates=datetime.date, empty='NA', numbers=str).value = data
-                    #sht.range(cellIndex).expand('right').autofit()
-                    i += 1
-            except:
-                import sys
-                data = sys.exc_info()
-                logging.error("导出Excel:{}".format(data))
-            finally:
-                #print(fileName)
-                wb.save(filePath)
+    try:
+        with conn.cursor(SSCursor) as cursor:
+            with Excel() as newExcel:
+                wb = newExcel.newExcel()
+                sht = wb.sheets.active
+                try:
+                    cursor.execute(
+                        " select j.clinicname as '诊所名',"
+                        "j.doctorid as '申请医生ID',"
+                        "j.doctorname as '申请医生姓名',"
+                        "j.productname as '申请产品',"
+                        "j.proposename  as '申请人',"
+                        "j.proposemobile as '申请人电话',"
+                        "j.total as '账单总额',"
+                        "j.amount as '申请金额',"
+                        "j.firstpay as '首付金额',"
+                        "j.firstpayscale as '首付比例',"
+                        "j.term as '期数',"
+                        "j.notifytype as '通知类型',"
+                        "j.applystatus as '通知状态',"
+                        "j.remark as '备注信息',"
+                        "j.orderno as '申请单编号',"
+                        "j.orderid as '金服侠唯一编号',"
+                        "j.cardid as '申请人身份证号' "
+                        "from db_koala.t_jfx_apply j where j.datastatus=1 order by j.clinicuniqueid,j.createdate ")
+                    col_names = [col[0] for col in cursor.description]
+                    sht.range('A1').options(empty='NA', numbers=str).value = col_names
+                    sht.range('A1').expand('right').autofit()
+                    i = 2
+                    while True:
+                        data = cursor.fetchone()
+                        if data is None or not data:
+                            break
+                        cellIndex = 'A' + str(i)
+                        sht.range(cellIndex).options(dates=datetime.date, empty='NA', numbers=str).value = data
+                        # sht.range(cellIndex).expand('right').autofit()
+                        i += 1
+                except:
+                    import sys
+                    data = sys.exc_info()
+                    logging.error("插入Excel数据错误:{}".format(data))
+                finally:
+                    wb.save(filePath)
+    except:
+        import sys
+        data = sys.exc_info()
+        logging.error("新建Excel错误,退出:{}".format(data))
+        exit(0)
+
     logging.info('Excel文件生成完毕-->>'+filePath)
     # 上传文件到ftp
     if os.path.exists(filePath):
