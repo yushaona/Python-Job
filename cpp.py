@@ -4,6 +4,13 @@ import logging
 import sys
 
 
+nash={}
+nash['nash1'] = '22'
+nash['nash2'] = '33'
+
+for k,v in nash.items():
+    print("{}={}".format(k,v))
+
 
 print(sys.argv[0][:sys.argv[0].rfind('.')]+'.log')
 pyName = sys.argv[0].split('.')
@@ -39,3 +46,15 @@ print(time.timezone)
 a = (1,2,'4',3)
 c = [ str(i) for i in a ]
 print(c)
+
+print('-----------------')
+print([ num if num >2 else '|' for num in range(5)])
+
+from random import  randrange
+element = 0
+while element < 10:
+    new_element = 4 if randrange(100) > 89 else 2
+    print(new_element)
+    element = element +1
+
+

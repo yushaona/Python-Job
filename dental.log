@@ -1,0 +1,22 @@
+INFO 2017-10-31 15-35-07 13160 17716 MainThread dental.py <module> -----------数据库连接信息-----------
+INFO 2017-10-31 15-35-07 13160 17716 MainThread dental.py <module> host:115.28.139.39
+INFO 2017-10-31 15-35-07 13160 17716 MainThread dental.py <module> port:2789
+INFO 2017-10-31 15-35-07 13160 17716 MainThread dental.py <module> user:root
+INFO 2017-10-31 15-35-07 13160 17716 MainThread dental.py <module> password:y1y2g3j4fussen
+INFO 2017-10-31 15-35-07 13160 17716 MainThread dental.py <module> defaultDB:db_flybear
+INFO 2017-10-31 15-35-07 13160 17716 MainThread dental.py <module> -----------ftp连接信息--------------
+INFO 2017-10-31 15-35-07 13160 17716 MainThread dental.py <module> RemoteIp:115.28.139.39
+INFO 2017-10-31 15-35-07 13160 17716 MainThread dental.py <module> RemotePort:1900
+INFO 2017-10-31 15-35-07 13160 17716 MainThread dental.py <module> UserName:fussen
+INFO 2017-10-31 15-35-07 13160 17716 MainThread dental.py <module> PassWord:1q2w3e
+INFO 2017-10-31 15-35-07 13160 17716 MainThread dental.py <module> 开始生成Excel文件-->>D:\GitHub\Python-Job\whitelist\dental_20171031.xls
+ERROR 2017-10-31 15-35-10 13160 17716 MainThread dental.py <module> 插入Excel数据错误:(<class 'pymysql.err.ProgrammingError'>, ProgrammingError(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'I ( SELECT a.bindmobile FROM ( SELECT SUM(1) AS res,bindmobile FROM t_user u INN' at line 1"), <traceback object at 0x0000021DC881DE08>)
+INFO 2017-10-31 15-35-10 13160 17716 MainThread dental.py <module> Excel文件生成完毕-->>D:\GitHub\Python-Job\whitelist\dental_20171031.xls
+INFO 2017-10-31 15-36-34 18268 13996 MainThread dental.py <module> -----------数据库连接信息-----------
+INFO 2017-10-31 15-36-34 18268 13996 MainThread dental.py <module> host:115.28.139.39
+INFO 2017-10-31 15-36-34 18268 13996 MainThread dental.py <module> port:2789
+INFO 2017-10-31 15-36-34 18268 13996 MainThread dental.py <module> user:root
+INFO 2017-10-31 15-36-34 18268 13996 MainThread dental.py <module> password:y1y2g3j4fussen
+INFO 2017-10-31 15-36-34 18268 13996 MainThread dental.py <module> defaultDB:db_flybear
+INFO 2017-10-31 15-36-35 18268 13996 MainThread dental.py <module> 开始生成Excel文件-->>D:\GitHub\Python-Job\whitelist\dental_20171031.xls
+INFO 2017-10-31 15-39-07 18268 13996 MainThread dental.py <module> Excel文件生成完毕-->>D:\GitHub\Python-Job\whitelist\dental_20171031.xls

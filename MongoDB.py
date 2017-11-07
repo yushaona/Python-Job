@@ -25,7 +25,7 @@ def ClearMonogo(db,collections,theDict):
                 except (AutoReconnect,ConnectionFailure):
                     count += 1
                     if count > 3:
-                        print("ConnectionFailure,give up handle" +i )
+                        print("ConnectionFailure,give up  " +i )
                         break
 
     except:
