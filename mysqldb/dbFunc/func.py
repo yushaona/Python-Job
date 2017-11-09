@@ -29,6 +29,9 @@ def importEnteCode(db,cursor,dentalID,enteCode):
     finally:
         pass
 
+
+
+
 def compressDB(db,oldcursor,dbName,connNew):
     "压缩库中的所有表"
     try:
@@ -88,17 +91,32 @@ def compressTable(db,cursor,dbName,tableName):
             db.rollback()
 
 def AddColumn(db,cursor,dbName,tableName,columnName,other):
-    "添加字段"
-    if HasColumn(cursor,dbName,tableName,columnName) == False:
-        print("添加字段 %s->%s" %(dbName+"."+tableName,columnName))
-        try:
-            cursor.execute(" ALTER TABLE %s.%s  ADD COLUMN %s %s " %(dbName,tableName,columnName,other))
-            db.commit()
-        except:
-            import sys
-            data = sys.exc_info()
-            print(data)
-            db.rollback()
+    if dbName == "db_image" and tableName == "t_image":
+        for i in range(200):
+            theName = tableName+'_'+str(i)
+            if HasColumn(cursor, dbName, theName, columnName) == False:
+                print("添加字段 %s->%s" % (dbName + "." + theName, columnName))
+                try:
+                    cursor.execute(" ALTER TABLE %s.%s  ADD COLUMN %s %s " % (dbName, theName, columnName, other))
+                    db.commit()
+                except:
+                    import sys
+                    data = sys.exc_info()
+                    print(data)
+                    db.rollback()
+        pass
+    else:
+        "添加字段"
+        if HasColumn(cursor,dbName,tableName,columnName) == False:
+            print("添加字段 %s->%s" %(dbName+"."+tableName,columnName))
+            try:
+                cursor.execute(" ALTER TABLE %s.%s  ADD COLUMN %s %s " %(dbName,tableName,columnName,other))
+                db.commit()
+            except:
+                import sys
+                data = sys.exc_info()
+                print(data)
+                db.rollback()
 
 def CreateTable(db,cursor,dbName,tableName,createSql):
     "创建表"
