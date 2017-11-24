@@ -43,19 +43,19 @@ proDatas=('AppProDoctBillFee','AppProDoctDebts','AppProDoctDisCharge','AppProDoc
 
 
 if __name__ == "__main__":
-    username, password, host, port = "eagle", "wing2016", "115.28.139.39", 27017
 
-    # 第一种连接方式
-    # conn = MongoClient(host,port,True,username=username,password=password,maxIdleTimeMS=10000)
-
-    #第二种连接方式  URI的方式
     try:
-        from urllib.parse import quote_plus #@ / + 等特殊字符需要url编码
+        from urllib.parse import quote_plus  # @ / + 等特殊字符需要url编码
     except ImportError:
         from urllib import quote_plus
 
-    monogoURI = "mongodb://%s:%s@%s:%s" % (quote_plus(username), quote_plus(password), host,27017)
-    conn = MongoClient(monogoURI)
+    username, password, host, port = "eagle", "wing2016", "115.28.139.39", 27017
+    # 第一种连接方式
+    conn = MongoClient(host=host,port=port,username=username,password=password,maxIdleTimeMS=10000)
+
+    #第二种连接方式  URI的方式
+    # monogoURI = "mongodb://%s:%s@%s:%s" % (quote_plus(username), quote_plus(password), host,27017)
+    # conn = MongoClient(monogoURI)
 
 
     try:
