@@ -124,7 +124,7 @@ def ModifyColumn(db,cursor,dbName,tableName,columnName,other):
     if dbName == "db_image" and tableName == "t_image":
         for i in range(200):
             theName = tableName+'_'+str(i)
-            if HasColumn(cursor, dbName, theName, columnName) == False:
+            if HasColumn(cursor, dbName, theName, columnName) == True:
                 print("修改字段 %s->%s" % (dbName + "." + theName, columnName))
                 try:
                     cursor.execute(" ALTER TABLE %s.%s  modify COLUMN %s %s " % (dbName, theName, columnName, other))
@@ -137,7 +137,7 @@ def ModifyColumn(db,cursor,dbName,tableName,columnName,other):
         pass
     else:
         "修改字段"
-        if HasColumn(cursor,dbName,tableName,columnName) == False:
+        if HasColumn(cursor,dbName,tableName,columnName) == True:
             print("修改字段 %s->%s" %(dbName+"."+tableName,columnName))
             try:
                 cursor.execute(" ALTER TABLE %s.%s  modify COLUMN %s %s " %(dbName,tableName,columnName,other))
