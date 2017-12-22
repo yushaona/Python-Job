@@ -118,6 +118,36 @@ def AddColumn(db,cursor,dbName,tableName,columnName,other):
                 print(data)
                 db.rollback()
 
+#alter table 表名 modify column 字段名 类型;
+
+def ModifyColumn(db,cursor,dbName,tableName,columnName,other):
+    if dbName == "db_image" and tableName == "t_image":
+        for i in range(200):
+            theName = tableName+'_'+str(i)
+            if HasColumn(cursor, dbName, theName, columnName) == False:
+                print("修改字段 %s->%s" % (dbName + "." + theName, columnName))
+                try:
+                    cursor.execute(" ALTER TABLE %s.%s  modify COLUMN %s %s " % (dbName, theName, columnName, other))
+                    db.commit()
+                except:
+                    import sys
+                    data = sys.exc_info()
+                    print(data)
+                    db.rollback()
+        pass
+    else:
+        "修改字段"
+        if HasColumn(cursor,dbName,tableName,columnName) == False:
+            print("修改字段 %s->%s" %(dbName+"."+tableName,columnName))
+            try:
+                cursor.execute(" ALTER TABLE %s.%s  modify COLUMN %s %s " %(dbName,tableName,columnName,other))
+                db.commit()
+            except:
+                import sys
+                data = sys.exc_info()
+                print(data)
+                db.rollback()
+
 def CreateTable(db,cursor,dbName,tableName,createSql):
     "创建表"
     cursor.execute("select count(*) as count from information_schema.tables where table_schema='%s' and table_name='%s' " %(dbName,tableName))
