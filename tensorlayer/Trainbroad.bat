@@ -1,0 +1,1 @@
+tensorboard --logdir=%~dp0\logs\train

@@ -1,0 +1,1 @@
+tensorboard --port 6007 --logdir=%~dp0\logs\validation"
