@@ -35,6 +35,13 @@ def GetFileSize(filePath):
     fsize = os.path.getsize(filePath)
     return round(fsize / float(1024),2)
 
+
+
+imageHeight = 200
+imageWidth = 200
+imageChannel = 3
+imageClasses = 11
+
 if __name__ == "__main__":
     curPath = os.getcwd()
     #image path
@@ -95,8 +102,8 @@ if __name__ == "__main__":
     sess = tf.InteractiveSession(config=config_tf)
     tl.ops.set_gpu_fraction(gpu_fraction=0.8)
     with tf.device('/cpu:0'):
-        gnet = GoogleNetStructure(classes=4, batch_size=1, imagewidth=50,
-                                  imageheight=50, imagechannel=1)
+        gnet = GoogleNetStructure(classes=imageClasses, batch_size=1, imagewidth=imageWidth,
+                                  imageheight=imageHeight, imagechannel=imageChannel)
         gnet.model()
         if tl.files.load_and_assign_npz(sess, name='model/model5.npz', network=gnet.network) == False:
             saver = tf.train.Saver()
@@ -108,7 +115,6 @@ if __name__ == "__main__":
             else:
                 logging.error("model restore failed !")
                 exit(0)
-    #bucket = utils.GetOssBucket('dt360-d')
     now = time.time()
     while True:
         try:
@@ -140,18 +146,18 @@ if __name__ == "__main__":
                 try:
                     logging.info('JpgSample is ok,convert image')
                     labels = np.asarray(labels, dtype='int32')
-                    Y = np.zeros((len(labels), 4))
+                    Y = np.zeros((len(labels), imageClasses))
                     Y[np.arange(len(labels)), labels] = 1.
                     for i, s in enumerate(samples):
                         logging.info(s)
                         samples[i] = Imagefile.load_image(s)
-                        samples[i] = Imagefile.resize_image(samples[i], 50, 50)
-                        samples[i] = Imagefile.convert_color(samples[i], 'L')
+                        samples[i] = Imagefile.resize_image(samples[i], imageWidth, imageHeight)
+                        #samples[i] = Imagefile.convert_color(samples[i], 'L')
                         samples[i] = Imagefile.pil_to_nparray(samples[i])
                         samples[i] /= 255.
 
                     samples = np.asarray(samples, dtype=np.float32)
-                    samples = samples.reshape([-1, 50, 50, 1])
+                    samples = samples.reshape([-1, imageWidth, imageHeight, imageChannel])
                     #result data
                     samples = np.asarray(samples, dtype=np.float32)
                     Y = np.asarray(Y, dtype=np.int64)
@@ -163,16 +169,30 @@ if __name__ == "__main__":
                         r = 'GrayOther'
                         if ss == 0:
                             r = 'DentalCT'
-                        if ss == 1:
+                        elif ss == 1:
                             r = 'SkullCT'
-                        if ss == 2:
+                        elif ss == 2:
+                            r = 'SkullFaceCT'
+                        elif ss == 3:
                             r = 'ToothCT'
-                        if ss == 3:
-                            r = 'GrayOther'
+                        elif ss == 4:
+                            r = 'CT'
+                        elif ss == 5:
+                            r = 'EndoScopic'
+                        elif ss == 6:
+                            r = 'IntraOral'
+                        elif ss == 7:
+                            r = 'ExternOral'
+                        elif ss == 8:
+                            r = 'Informed'
+                        elif ss == 9:
+                            r = 'ModelPic'
+                        elif ss == 10:
+                            r = 'RGBOther'
                         sopuid = dbArgs[int(i * gnet.batch_size)][0]
                         imageNum = dbArgs[int(i * gnet.batch_size)][1]
                         with GetConnection().cursor(SSCursor) as cursor:
-                            cursor.execute(" update db_image." + imageNum + " set isgray=1,classes=%s where sopuid=%s", (r,sopuid))
+                            cursor.execute(" update db_image." + imageNum + " set ishandle=0,aiclasses=%s,classes=if(ismanual=1,classes,%s) where sopuid=%s ", (r,sopuid))
                             os.remove(os.path.join(dirPath,sopuid+"&"+imageNum+".jpg"))
                 except:
                     data = sys.exc_info()
@@ -186,7 +206,7 @@ if __name__ == "__main__":
                     for m in range(errNum):
                         try:
                             with GetConnection().cursor(SSCursor) as cursor:
-                                cursor.execute(" update db_image." + errArgs[m][1] + " set isgray=-1 where sopuid=%s",
+                                cursor.execute(" update db_image." + errArgs[m][1] + " set ishandle=-1 where sopuid=%s",
                                                (errArgs[m][0]))
                                 os.remove(os.path.join(dirPath, errArgs[m][0] + "&" + errArgs[m][1] + ".jpg"))
                         except:
