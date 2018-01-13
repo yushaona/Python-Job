@@ -192,15 +192,15 @@ if __name__ == "__main__":
                         sopuid = dbArgs[int(i * gnet.batch_size)][0]
                         imageNum = dbArgs[int(i * gnet.batch_size)][1]
                         with GetConnection().cursor(SSCursor) as cursor:
-                            cursor.execute(" update db_image." + imageNum + " set ishandle=0,aiclasses=%s,classes=if(ismanual=1,classes,%s) where sopuid=%s ", (r,sopuid))
+                            cursor.execute(" update db_image." + imageNum + " set ishandle=0,aiclasses=%s,classes=if(ismanual=1,classes,%s) where sopuid=%s ", (r,r,sopuid))
                             os.remove(os.path.join(dirPath,sopuid+"&"+imageNum+".jpg"))
                 except:
                     data = sys.exc_info()
                     if 'Lost connection to MySQL' in data:
                         GetConnection()
                     logging.error("jpg处理错误:{}".format(data))
-
             errNum = len(errArgs)
+
             if errNum > 0:
                     logging.info("file is not ok  %d" %(errNum))
                     for m in range(errNum):
