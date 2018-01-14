@@ -120,9 +120,9 @@ if __name__ == "__main__":
         try:
             logging.info("当前时间: %s " %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
 
-            # if time.time() - now < sleeptime:
-            #     time.sleep(5)
-            #     continue
+            if time.time() - now < sleeptime:
+                time.sleep(5)
+                continue
             now = time.time()
             errArgs=[]
             dbArgs,labels,samples=[],[],[]
@@ -206,7 +206,7 @@ if __name__ == "__main__":
                     for m in range(errNum):
                         try:
                             with GetConnection().cursor(SSCursor) as cursor:
-                                cursor.execute(" update db_image." + errArgs[m][1] + " set ishandle=-1 where sopuid=%s",
+                                cursor.execute(" update db_image." + errArgs[m][1] + " set ishandle=-1 where sopuid=%s ",
                                                (errArgs[m][0]))
                                 os.remove(os.path.join(dirPath, errArgs[m][0] + "&" + errArgs[m][1] + ".jpg"))
                         except:
