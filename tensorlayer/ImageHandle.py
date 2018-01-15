@@ -21,8 +21,8 @@ def extractFileName(fullPath):
 
 conn = None
 #数据库连接参数
-#db_host,db_port,db_user,db_pass,db_default = "rdsg2i6roz9n6uteej4up.mysql.rds.aliyuncs.com",3306,"dental360","fussenct2014","db_flybear"
-db_host,db_port,db_user,db_pass,db_default = "115.28.139.39",2789,"root","y1y2g3j4fussen","db_flybear"
+db_host,db_port,db_user,db_pass,db_default = "rdsg2i6roz9n6uteej4up.mysql.rds.aliyuncs.com",3306,"dental360","fussenct2014","db_flybear"
+#db_host,db_port,db_user,db_pass,db_default = "115.28.139.39",2789,"root","y1y2g3j4fussen","db_flybear"
 def GetConnection():
     global conn
     if conn is None:
@@ -67,7 +67,7 @@ if __name__ == "__main__":
     logging.getLogger('').addHandler(console)
 
     parser = argparse.ArgumentParser(description='Control program running argument')
-    parser.add_argument('-s', "--sleep", type=int, default=120, help="sleep time (s)")
+    parser.add_argument('-s', "--sleep", type=int, default=15, help="sleep time (s)")
     FLAGS = parser.parse_args()
     sleeptime = FLAGS.sleep
     logging.info("处理时间间隔 %ds " %(sleeptime))
@@ -121,25 +121,33 @@ if __name__ == "__main__":
             logging.info("当前时间: %s " %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
 
             if time.time() - now < sleeptime:
-                time.sleep(5)
+                time.sleep(1)
                 continue
             now = time.time()
             errArgs=[]
             dbArgs,labels,samples=[],[],[]
             logging.info("Search for *.jpg in %s " %(dirPath))
             exts = ['jpg','jpeg']
+            #每次加载20张图片处理
+            counter = 0
             jpgs = os.walk(dirPath).__next__()[2]
             for jpgSample in jpgs:
                 if any(flag in jpgSample for flag in exts):
+                    counter += 1
                     samplePath = os.path.join(dirPath, jpgSample)
                     splitRes = jpgSample.split('&')
                     imageName = splitRes[1].split('.')
                     if GetFileSize(samplePath) < 0.01:
                         errArgs.append((splitRes[0],imageName[0]))
-                        continue
+                        if counter > 19:
+                            break
+                        else:
+                            continue
                     samples.append(samplePath)
                     dbArgs.append((splitRes[0],imageName[0]))
                     labels.append(0)
+                    if counter > 19:
+                        break
             total_num = len(samples)
             logging.info("JpgSamples number is %d " % (total_num))
             if total_num > 0:
