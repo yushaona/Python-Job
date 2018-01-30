@@ -62,8 +62,12 @@ try:
         # CreateTable(db, cursor, "db_koala", "t_qcitemset", CreateQcItemSet())
         # CreateTable(db, cursor, "db_koala", "t_qcplan", CreateQcPlan())
         # CreateTable(db, cursor, "db_koala", "t_qcset", CreateQcSet())
-        AddColumn(db, cursor, "db_image", "t_image", "FileType",
-                  "VARCHAR(40) DEFAULT NULL COLLATE 'utf8_unicode_ci' COMMENT '文件类型' ")
+        # AddColumn(db, cursor, "db_image", "t_image", "FileType",
+        #           "VARCHAR(40) DEFAULT NULL COLLATE 'utf8_unicode_ci' COMMENT '文件类型' ")
+
+
+        UpdateHandle(db,cursor,"db_image","t_image")
+        #ModifyColumn(db, cursor, "db_image", "t_image", "classes","VARCHAR(32) ")
         print("运行完毕")
     else:
         print("执行已取消")

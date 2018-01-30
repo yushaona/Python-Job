@@ -90,6 +90,23 @@ def compressTable(db,cursor,dbName,tableName):
             print("compressTable:%s"%(data))
             db.rollback()
 
+
+
+
+def UpdateHandle(db,cursor,dbName,tableName):
+    if dbName == "db_image" and tableName == "t_image":
+        for i in range(200):
+            theName = tableName + '_' + str(i)
+            try:
+                print(theName)
+                cursor.execute(" update %s.%s  set ishandle=-1,aiclasses='',classes=if(ismanual=1,classes,'') where ishandle=0 or ishandle=-1 " % (dbName, theName))
+                db.commit()
+            except:
+                import sys
+                data = sys.exc_info()
+                print(data)
+                db.rollback()
+
 def AddColumn(db,cursor,dbName,tableName,columnName,other):
     if dbName == "db_image" and tableName == "t_image":
         for i in range(200):
