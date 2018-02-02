@@ -91,6 +91,21 @@ def compressTable(db,cursor,dbName,tableName):
             db.rollback()
 
 
+def AddIndex(db,cursor,dbName,tableName):
+    if dbName == "db_image" and tableName == "t_image":
+        for i in range(3,200):
+            theName = tableName + '_' + str(i)
+            try:
+                print(theName)
+                cursor.execute(" alter table %s.%s add index ishandle(`ishandle`);alter table %s.%s add index classes(`classes`);alter table %s.%s add index ismanual(`ismanual`); alter table %s.%s add index aiclasses(`aiclasses`); " % (dbName, theName,dbName, theName,dbName, theName,dbName, theName))
+                db.commit()
+            except:
+                import sys
+                data = sys.exc_info()
+                print(data)
+                db.rollback()
+
+            pass
 
 
 def UpdateHandle(db,cursor,dbName,tableName):

@@ -66,8 +66,9 @@ try:
         #           "VARCHAR(40) DEFAULT NULL COLLATE 'utf8_unicode_ci' COMMENT '文件类型' ")
 
 
-        UpdateHandle(db,cursor,"db_image","t_image")
+        #UpdateHandle(db,cursor,"db_image","t_image")
         #ModifyColumn(db, cursor, "db_image", "t_image", "classes","VARCHAR(32) ")
+        AddIndex(db, cursor, "db_image", "t_image")
         print("运行完毕")
     else:
         print("执行已取消")
